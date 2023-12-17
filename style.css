@@ -1,66 +1,150 @@
-* {
-    margin: 0;
-    padding: 0;
-    font-family: sans-serif;
-    display: flex;
-    color: white;
+*,
+*::before,
+*::after {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
 }
 
-body {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-    justify-content: center;
-    align-items: center;
-    background: #12c2e9;
-    background: -webkit-linear-gradient(to right, #f64f59, #c471ed, #12c2e9);
-    background: linear-gradient(to right, #f64f59, #c471ed, #12c2e9);
+:root {
+  --clock-size: min(80dvh, 80dvw);
 }
 
 .container {
-    position: relative;
+  display: grid;
+  place-content: center;
+  min-height: 100dvh;
+  background-color: hsl(0, 0%, 100%);
+  background-image: linear-gradient(to bottom,
+      hsla(0, 0%, 0%, 0.65),
+      hsla(99, 73%, 48%, 0.65)),
+    repeating-linear-gradient(to left,
+      hsla(24, 80%, 95%, 0.75),
+      hsla(24, 60%, 80%, 0.55) 5px,
+      hsla(32, 100%, 50%, 0.55) 95px,
+      hsla(24, 80%, 5%, 0.65) 100px),
+    repeating-linear-gradient(to left,
+      hsla(24, 30%, 85%, 0.55),
+      hsla(0, 100%, 50%, 0.65) 8px);
 }
 
 .clock {
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.1)25%, rgba(255, 0, 0, 0.8));
-    box-shadow: 0px, 0px, 30px, rgba(3, 3, 3, 0.9);
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: var(--clock-size);
+  height: var(--clock-size);
+  border-radius: 50%;
+  background-image: radial-gradient(closest-side,
+      hsl(28, 7%, 55%) 90%,
+      hsl(0, 0%, 2%));
+  box-shadow: inset 2px 10px 10px hsla(55, 95%, 75%, 0.35),
+    inset 2px -10px 10px hsla(55, 15%, 15%, 0.25),
+    2px 12px 16px hsla(0, 0%, 0%, 0.2);
 }
-.clock span{
-    position: absolute;
-    transform: rotate(calc(30deg * var(--1)));
-    inset: 12px;
-    text-align: center;
-    justify-content: center;
+
+.face {
+  position: absolute;
+  width: 90%;
+  height: 90%;
+  border-radius: 50%;
+  background-color: hsl(101, 61%, 36%);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-shadow: inset 0px 10px 10px hsla(55, 95%, 15%, 0.35),
+    inset 0px -5px 5px hsla(67, 26%, 32%, 0.25);
 }
-.clock span b{
-    transform: rotate(calc(-300deg * var (--1)));
-    display: inline-block;
-    font-size: 20px;
+
+.face::after {
+  --_size: calc(var(--clock-size) * 0.05);
+  --_offset: calc(var(--_size) / 10);
+  --_blur: calc(var(--_size) / 8);
+  content: "";
+  position: absolute;
+  width: var(--_size);
+  height: var(--_size);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: hsl(113, 100%, 50%);
+  clip-path: none;
+  box-shadow: inset 0px var(--_offset) var(--_blur) hsla(55, 95%, 75%, 0.35),
+    inset 0px calc(var(--_offset) * -1) var(--_blur) hsla(55, 15%, 15%, 0.25);
+  z-index: 100;
 }
-.clock::before{
-    content: "";
-    width: 15px;
-    height: 15px;
-    border-radius: 50%;
-    background-color: #fff;
-    z-index: 2;
+
+.number {
+  position: absolute;
+  width: 1%;
+  height: 35%;
+  top: 15%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, 0%) rotate(calc(var(--i) * 30deg));
 }
-.hand{
-    justify-content: center;
-    align-items: flex-end;
-    display: flex;
-    position: absolute;
+
+.number::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 9%;
+  top: -37%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgb(255, 255, 255);
 }
-.hand i{
-    position:absolute;
-    width: 5px;
-    height: var(--h);
-    background-color: var(--clr);
-    border-radius: 8px;
+
+.number span {
+  position: absolute;
+  display: block;
+  top: -12%;
+  left: 50%;
+  transform-origin: 50% 50%;
+  transform: translate(-50%, -50%) rotate(calc(var(--i) * -30deg));
+  font-size: calc(var(--clock-size) / 16);
+  text-align: center;
+}
+
+.hand {
+  --_rotation: 0deg;
+  position: absolute;
+  width: var(--_width);
+  height: var(--_height);
+  top: 50%;
+  left: 50%;
+  transform-origin: 50% 100%;
+  transform: translate(-50%, -100%) rotate(var(--_rotation));
+  background-color: hsl(254, 85%, 11%);
+  background-image: linear-gradient(to left,
+      hsl(0, 0%, 100%) 20%,
+      hsl(112, 100%, 50%),
+      hsl(0, 0%, 100%) 80%);
+  transition: all 100ms ease-in;
+}
+
+.hour-hand {
+  --_height: calc(var(--clock-size) * 0.225);
+  --_width: calc(var(--clock-size) * 0.04);
+  --_rotation: 40deg;
+  clip-path: polygon(50% 0%, 100% 40%, 60% 100%, 40% 100%, 0% 40%);
+}
+
+.minute-hand {
+  --_height: calc(var(--clock-size) * 0.315);
+  --_width: calc(var(--clock-size) * 0.035);
+  --_rotation: 120deg;
+  clip-path: polygon(50% 0%, 100% 40%, 60% 100%, 40% 100%, 0% 40%);
+}
+
+.second-hand {
+  --_height: calc(var(--clock-size) * 0.325);
+  --_width: calc(var(--clock-size) * 0.025);
+  --_rotation: 0deg;
+  clip-path: polygon(50% 0%,
+      100% 10%,
+      70% 20%,
+      70% 100%,
+      30% 100%,
+      30% 20%,
+      0% 10%);
 }
